@@ -20,7 +20,11 @@ import { createPageTemplate } from "./utils/helper";
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID ?? "";
 const dataset = process.env.SANITY_STUDIO_DATASET;
 const title = process.env.SANITY_STUDIO_TITLE;
-const presentationOriginUrl = process.env.SANITY_STUDIO_PRESENTATION_URL;
+const isDev = process.env.NODE_ENV === "development";
+const presentationOriginUrl = isDev
+  ? "http://localhost:3000" // Local development
+  : process.env.SANITY_STUDIO_PRESENTATION_URL; // Production
+const previewSecret = process.env.SANITY_PREVIEW_SECRET;
 
 export default defineConfig({
   name: "default",
@@ -34,9 +38,9 @@ export default defineConfig({
         locations,
       },
       previewUrl: {
-        origin: presentationOriginUrl ?? "http://localhost:3000",
+        origin: presentationOriginUrl,
         previewMode: {
-          enable: "/api/presentation-draft",
+          enable: `/api/presentation-draft?token=${previewSecret}`,
         },
       },
     }),
